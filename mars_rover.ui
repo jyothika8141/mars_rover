@@ -102,6 +102,12 @@
     <property name="text">
      <string/>
     </property>
+    <property name="pixmap">
+     <pixmap>mars.jpg</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">

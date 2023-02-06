@@ -9,12 +9,16 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QImage, QPixmap
 
 import requests
 import os
 import json
 
 api_key = os.getenv('API_KEY')
+
+link_lst =[]
+ind = 1
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -53,6 +57,8 @@ class Ui_MainWindow(object):
         self.l_pic = QtWidgets.QLabel(self.centralwidget)
         self.l_pic.setGeometry(QtCore.QRect(100, 360, 481, 261))
         self.l_pic.setText("")
+        self.l_pic.setPixmap(QtGui.QPixmap("mars.jpg"))
+        self.l_pic.setScaledContents(True)
         self.l_pic.setObjectName("l_pic")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(260, 310, 131, 25))
@@ -107,15 +113,13 @@ class Ui_MainWindow(object):
         self.dateEdit.setGeometry(QtCore.QRect(370, 160, 151, 31))
         self.dateEdit.setObjectName("dateEdit")
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 748, 22))
-        self.menubar.setObjectName("menubar")
-        MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
         self.pushButton.clicked.connect(self.pressed)
+        self.pushButton_2.clicked.connect(self.previous)
+        self.pushButton_3.clicked.connect(self.next)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -144,8 +148,14 @@ class Ui_MainWindow(object):
         self.cb_cam.setItemText(6, _translate("MainWindow", "MARDI"))
         self.cb_cam.setItemText(7, _translate("MainWindow", "NAVCAM"))
         self.l_sol.setText(_translate("MainWindow", "Martian_sol"))
-    
+
     def pressed(self):
+        global link_lst
+        global ind
+
+        link_lst = []
+        ind = 1
+
         rover = self.cb_rover.currentText().lower()
         datetype = self.cb_datetype.currentText()
         e_date = self.dateEdit.date().toPyDate()
@@ -171,17 +181,63 @@ class Ui_MainWindow(object):
         data = json.loads(response.text)
 
         count = 0
-        lst = []
         for info in data['photos']:
-            print(info['img_src'])
-            lst.append(info['img_src'])
+            link_lst.append(info['img_src'])
             count += 1
             if count == 15:
                 break
         
-        
+        print(link_lst)
         print(count)
 
+        link = link_lst[0]
+        print(link)
+
+        image = QImage()
+        image.loadFromData(requests.get(link).content)
+
+
+        self.l_pic.setPixmap(QPixmap(image))
+        self.l_pic.show()
+
+    def previous(self):
+        print("in pre")
+        global ind
+        ind += 1
+
+        try:
+            link = link_lst[ind]
+        except IndexError:
+            print("yo")
+            ind = 0
+            link = link_lst[ind]
+            
+
+        image = QImage()
+        image.loadFromData(requests.get(link).content)
+
+
+        self.l_pic.setPixmap(QPixmap(image))
+        self.l_pic.show()
+
+    def next(self):
+        print("in next")
+        global ind
+        ind -= 1
+
+        try:
+            link = link_lst[ind]
+        except IndexError:
+            print("hi")
+            ind = 0
+            link = link_lst[ind]
+        
+        image = QImage()
+        image.loadFromData(requests.get(link).content)
+
+
+        self.l_pic.setPixmap(QPixmap(image))
+        self.l_pic.show()
 
 
 if __name__ == "__main__":

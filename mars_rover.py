@@ -1,5 +1,6 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets        
 from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QGridLayout, QDesktopWidget
 import mailGUI  
 
 import requests
@@ -9,9 +10,11 @@ import json
 api_key = os.getenv('API_KEY')
 
 link_lst =[]
-ind = 1
+ind = 0
 
 class Ui_MainWindow(object):
+
+    
     def openWindow(self):
         print("inside email form")
         self.window = QtWidgets.QWidget()
@@ -584,18 +587,17 @@ class Ui_MainWindow(object):
             self.cb_cam.addItems(camera)
 
     def pressed(self):
+        print("in press")
         global link_lst, ind
 
         link_lst = []
-        ind = 1
+        ind = 0
 
         rover = self.cb_rover.currentText().lower()
         datetype = self.cb_datetype.currentText()
         e_date = self.dateEdit.date().toPyDate()
         sol = self.lineEdit_sol.text()
         cam = self.cb_cam.currentText().lower()
-
-        print(e_date)
 
         if datetype == 'Earth date':
             if cam == '':
@@ -622,44 +624,41 @@ class Ui_MainWindow(object):
             if count == 10:
                 break
         
+        length = len(link_lst)
         print(link_lst)
         print(count)
 
         if len(link_lst) != 0:
-            link = link_lst[0]
-            print(link)
+            for i in range(length):
+                x = requests.get(link_lst[i]).content
+                with open(f'rover_images/image{i}', 'wb')as file:
+                    file.write(x)
 
             image = QImage()
-            image.loadFromData(requests.get(link).content)
-            x = requests.get(link).content
-
-            with open("image", "wb") as bin_file:
-                bin_file.write(x)
-
-
+            with open(f'rover_images/image{ind}', 'rb') as file:
+                image_data = file.read()
+            image.loadFromData(image_data)
             self.l_pic.setPixmap(QPixmap(image))
             self.l_pic.show()
+
         else:
             print("no pics")
 
     def previous(self):
-        print("in pre")
+        print("in previous")
         global ind
         ind -= 1
-
-        try:
-            link = link_lst[ind]
-        except IndexError:
-            ind = 0
-            link = link_lst[ind]
             
-
-        image = QImage()
-        image.loadFromData(requests.get(link).content)
-
-
-        self.l_pic.setPixmap(QPixmap(image))
-        self.l_pic.show()
+        try:
+            with open(f'rover_images/image{ind}', 'rb') as file:
+                image_data = file.read()
+            image = QImage()
+            image.loadFromData(image_data)
+            self.l_pic.setPixmap(QPixmap(image))
+            self.l_pic.show()
+        except:
+            pass
+        
 
     def next(self):
         print("in next")
@@ -667,17 +666,14 @@ class Ui_MainWindow(object):
         ind += 1
 
         try:
-            link = link_lst[ind]
-        except IndexError:
-            ind = 0
-            link = link_lst[ind]
-        
-        image = QImage()
-        image.loadFromData(requests.get(link).content)
-
-
-        self.l_pic.setPixmap(QPixmap(image))
-        self.l_pic.show()
+            with open(f'rover_images/image{ind}', 'rb') as file:
+                image_data = file.read()
+            image = QImage()
+            image.loadFromData(image_data)
+            self.l_pic.setPixmap(QPixmap(image))
+            self.l_pic.show()
+        except:
+            pass
 
 if __name__ == "__main__":
     import sys

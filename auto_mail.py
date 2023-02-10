@@ -8,7 +8,7 @@ def mail(lst):
    email_subject = lst[1]
    
    email_smtp = "smtp.gmail.com"
-   sender_email_address = "jyothika8141@gmail.com"
+   sender_email_address = "marsrovers2232@gmail.com"
    email_password = os.getenv('pass')
 
    message = EmailMessage()
@@ -19,10 +19,14 @@ def mail(lst):
    
    message.set_content(lst[2])
 
-   with open('image_mars', 'rb') as file:
-      image_data = file.read()
+   try:
+      for i in range(10):
+         with open(f'rover_images/image{i}', 'rb') as file:
+            image_data = file.read()
+            message.add_attachment(image_data, maintype='image', subtype=imghdr.what(None, image_data))
+   except FileNotFoundError:
+      pass
 
-   message.add_attachment(image_data, maintype='image', subtype=imghdr.what(None, image_data))
 
 
    server = smtplib.SMTP(email_smtp, '587')

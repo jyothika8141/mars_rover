@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QMessageBox
 import auto_mail
 
 class Ui_Form(object):
@@ -373,10 +374,12 @@ class Ui_Form(object):
         sub = self.lineEdit.text()
         body = self.textEdit_2.toPlainText()
 
-        print(emails)
-
         auto_mail.mail([emails, sub, body])
-
+        
+        msg = QMessageBox()
+        msg.setWindowTitle("Mail")
+        msg.setText("Mail sent successfully!!")
+        x = msg.exec_()
 
 if __name__ == "__main__":
     import sys

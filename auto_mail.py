@@ -27,15 +27,12 @@ def mail(lst):
    except FileNotFoundError:
       pass
 
-
-
    server = smtplib.SMTP(email_smtp, '587')
    server.ehlo()
-
-   server.starttls()
-   
-   
+   server.starttls()  
    server.login(sender_email_address, email_password)
    server.send_message(message)
    print("email sent")
    server.quit()
+
+   

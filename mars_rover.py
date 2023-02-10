@@ -1,6 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets        
 from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtWidgets import QGridLayout, QDesktopWidget
 import mailGUI  
 
 import requests
@@ -13,8 +12,6 @@ link_lst =[]
 ind = 0
 
 class Ui_MainWindow(object):
-
-    
     def openWindow(self):
         print("inside email form")
         self.window = QtWidgets.QWidget()
@@ -589,6 +586,13 @@ class Ui_MainWindow(object):
     def pressed(self):
         print("in press")
         global link_lst, ind
+
+        for i in range(10):
+            file = "rover_images/" + f"image{i}"
+            if os.path.isfile(file):
+                os.remove(file)
+            else:
+                break
 
         link_lst = []
         ind = 0

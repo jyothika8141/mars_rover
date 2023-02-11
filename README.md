@@ -2,7 +2,7 @@
 
 <h2>Introduction</h2>
 
-This desktop application will fetch and display the latest images of Mars captures by martian rovers like Curiosity, Opporturnity and Spirit based on specific parameters.
+This desktop application will fetch and display the latest images of Mars captured by martian rovers like Curiosity, Opportunity, and Spirit based on specific parameters.
 <br>
 Futhermore you can share these amazing pictures with your friends via mail.
 <br>
